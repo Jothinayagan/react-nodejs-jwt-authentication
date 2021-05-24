@@ -1,16 +1,26 @@
 const bcrypt = require("bcryptjs");
 const userModel = require("./models/user");
 
-const loginUser = (req, res) => {
+const loginUser = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
+
+    // check whether is already exists
+    const user = await userModel.findOne({ email });
+    if (!user) return res.status(400).send("User already exist!");
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    // if (!isValidPassword) return res.status(400).send("Incorrect password!");
+    isValidPassword ? console.log("Valid user") : console.log("invalid User");
 };
 
 const signupUser = async (req, res) => {
-    console.log("Signing up...");
-
     if (req.body.password !== req.body.confirmPassword)
         return res.status(400).send({ message: `Password doesn't match` });
+
+    // Check weather user is already registered
+    const userExist = await userModel.findOne({ email: req.body.email });
+    if (userExist) return res.status(400).send("User already exist!");
 
     // encrypt password
     const salt = bcrypt.genSaltSync(10);
@@ -24,13 +34,8 @@ const signupUser = async (req, res) => {
         password: hashedPassword,
     });
 
-    console.log("new user", newUser);
-    // const savedUser = await newUser.save();
-    // console.log("saved User", savedUser);
-    // return false;
     try {
         const savedUser = await newUser.save();
-        console.log("Saved user", savedUser);
         return res.status(200).send({
             user: savedUser._id,
             message: "New user added successfully!",

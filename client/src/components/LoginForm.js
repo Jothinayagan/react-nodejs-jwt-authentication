@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+import axios from "axios";
+
 const initialState = {
     email: "",
     password: "",
@@ -17,6 +19,15 @@ function LoginForm() {
         });
     };
 
+    const handleLoginAction = (event) => {
+        event.preventDefault();
+
+        axios
+            .post("http://localhost:3004/auth/login", loginCredentials)
+            .then((res) => console.log(`Result success! ${res}`))
+            .catch((err) => console.error(err));
+    };
+
     return (
         <div>
             <Card
@@ -24,10 +35,11 @@ function LoginForm() {
                 style={{ minWidth: "400px", backgroundColor: "mintcream" }}>
                 <Card.Body>
                     <h2 className="text-center mb-4">Login</h2>
-                    <Form>
+                    <Form onSubmit={handleLoginAction}>
                         <Form.Group id="email">
                             <Form.Label>Email</Form.Label>
                             <Form.Control
+                                name="email"
                                 type="email"
                                 placeholder="Please enter email"
                                 onChange={handleInput}
@@ -37,8 +49,10 @@ function LoginForm() {
                         <Form.Group className="mt-3" id="password">
                             <Form.Label>Password</Form.Label>
                             <Form.Control
+                                name="password"
                                 type="password"
                                 placeholder="Please enter password"
+                                autoComplete="false"
                                 onChange={handleInput}
                                 required
                             />

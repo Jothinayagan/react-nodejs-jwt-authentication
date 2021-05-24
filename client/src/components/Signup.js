@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { Button, Card, Form } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Alert, Button, Card, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
+
+import axios from "axios";
 
 const initialState = {
     username: "",
@@ -11,10 +13,27 @@ const initialState = {
 
 function Signup() {
     const [userCredentials, setUserCredentials] = useState(initialState);
+    const [passwordMismatchAlert, setPasswordMismatchAlert] = useState(false);
 
     const handleInput = ({ target }) => {
         setUserCredentials({ ...userCredentials, [target.name]: target.value });
     };
+
+    const handleSignupAction = (event) => {
+        event.preventDefault();
+
+        axios
+            .post("http://localhost:3004/auth/signup", userCredentials)
+            .then((res) => console.log(res))
+            .catch((err) => console.error(err));
+    };
+
+    // check weather password is matched
+    useEffect(() => {
+        userCredentials.password !== userCredentials.confirmPassword
+            ? setPasswordMismatchAlert(true)
+            : setPasswordMismatchAlert(false);
+    }, [userCredentials.confirmPassword]);
 
     return (
         <div className="container">
@@ -24,7 +43,7 @@ function Signup() {
                 <Card className="w-100" style={{ minWidth: "400px" }}>
                     <Card.Body>
                         <h2 className="text-center mb-4">Sign up</h2>
-                        <Form>
+                        <Form onSubmit={handleSignupAction}>
                             <Form.Group id="email">
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control
@@ -65,6 +84,11 @@ function Signup() {
                                     required
                                 />
                             </Form.Group>
+                            {passwordMismatchAlert ? (
+                                <Alert className="mt-3" variant="danger">
+                                    Password doesn't match
+                                </Alert>
+                            ) : null}
                             <Button className="w-100 mt-3" type="submit">
                                 Sign up
                             </Button>

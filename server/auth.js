@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const userModel = require("./models/user");
 
 const loginUser = async (req, res) => {
@@ -10,8 +11,13 @@ const loginUser = async (req, res) => {
     if (!user) return res.status(400).send("User already exist!");
 
     const isValidPassword = await bcrypt.compare(password, user.password);
-    // if (!isValidPassword) return res.status(400).send("Incorrect password!");
-    isValidPassword ? console.log("Valid user") : console.log("invalid User");
+    if (!isValidPassword) return res.status(400).send("Incorrect password!");
+    // isValidPassword ? console.log("Valid user") : console.log("invalid User");
+
+    const jwtKey = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_TOKEN, {
+        expiresIn: "5m",
+    });
+    console.log("JWT key", jwtKey);
 };
 
 const signupUser = async (req, res) => {

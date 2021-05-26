@@ -23,7 +23,7 @@ function Signup() {
         event.preventDefault();
 
         axios
-            .post("http://localhost:3004/auth/signup", userCredentials)
+            .post(process.env.REACT_APP_SIGNUP_URI, userCredentials)
             .then((res) => console.log(res))
             .catch((err) => console.error(err));
     };

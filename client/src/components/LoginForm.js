@@ -23,7 +23,7 @@ function LoginForm() {
         event.preventDefault();
 
         axios
-            .post("http://localhost:3004/auth/login", loginCredentials)
+            .post(process.env.REACT_APP_LOGIN_URI, loginCredentials)
             .then((res) => console.log(`Result success! ${res}`))
             .catch((err) => console.error(err));
     };

@@ -1,2 +1,2 @@
-# react-nodejs-localstorage
+# react-nodejs-jwt-authentication
 Learning of httpOnly cookie to persist user logged in using JWT

@@ -23,8 +23,16 @@ function LoginForm() {
         event.preventDefault();
 
         axios
-            .post(process.env.REACT_APP_LOGIN_URI, loginCredentials)
-            .then((res) => console.log(`Result success! ${res}`))
+            .post(process.env.REACT_APP_LOGIN_URI, loginCredentials, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                withCredentials: true,
+            })
+            .then((res) => {
+                console.log(res);
+                console.log("Demo");
+            })
             .catch((err) => console.error(err));
     };
 

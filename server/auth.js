@@ -3,20 +3,33 @@ const jwt = require("jsonwebtoken");
 const userModel = require("./models/user");
 
 const loginUser = async (req, res) => {
-    const {email, password} = req.body;
+    console.info("Request Initiated @ Login function");
+
+    const { email, password } = req.body;
+    console.log("Email & Password destructured", email, password);
 
     // check whether is already exists
     const user = await userModel.findOne({ email });
-    if (!user) return res.status(400).send("User already exist!");
+    if (!user) return res.status(400).send("User not exist!");
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) return res.status(400).send("Incorrect password!");
     // isValidPassword ? console.log("Valid user") : console.log("invalid User");
 
-    const jwtKey = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_TOKEN, {
+    const jwtToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_TOKEN, {
         expiresIn: "5m",
     });
-    console.log("JWT key", jwtKey);
+    console.log("JWT key", jwtToken);
+
+    res.status(202)
+        .cookie("token", jwtToken, {
+            sameSite: "strict",
+            path: "/",
+            expires: new Date(new Date().getTime() + 5 * 10000),
+            httpOnly: true,
+        })
+        .send({ message: "Cookie assigned!" });
+    return;
 };
 
 const signupUser = async (req, res) => {

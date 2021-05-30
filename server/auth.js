@@ -10,11 +10,13 @@ const loginUser = async (req, res) => {
 
     // check whether is already exists
     const user = await userModel.findOne({ email });
-    if (!user) return res.status(400).send("User not exist!");
+    if (!user) return res.status(400).send({ message: "User not exist!" });
 
     const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) return res.status(400).send("Incorrect password!");
-    // isValidPassword ? console.log("Valid user") : console.log("invalid User");
+    if (!isValidPassword) {
+        console.log("Incorrect password", password, user.password);
+        return res.status(400).send({ message: "Incorrect password!" });
+    }
 
     const jwtToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_TOKEN, {
         expiresIn: "5m",
@@ -41,15 +43,15 @@ const signupUser = async (req, res) => {
     if (userExist) return res.status(400).send("User already exist!");
 
     // encrypt password
-    // const salt = bcrypt.genSaltSync(10);
-    // const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
-    // console.log(hashedPassword);
+    console.log(hashedPassword);
 
     const newUser = new userModel({
         name: req.body.username,
         email: req.body.email,
-        password: req.body.password,
+        password: hashedPassword,
     });
 
     try {

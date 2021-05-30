@@ -19,7 +19,7 @@ function LoginForm() {
         });
     };
 
-    const handleLoginAction = (event) => {
+    const handleLoginAction = async (event) => {
         event.preventDefault();
 
         axios
@@ -29,10 +29,7 @@ function LoginForm() {
                 },
                 withCredentials: true,
             })
-            .then((res) => {
-                console.log(res);
-                console.log("Demo");
-            })
+            .then((res) => console.log(res))
             .catch((err) => console.error(err));
     };
 

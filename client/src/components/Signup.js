@@ -3,7 +3,6 @@ import { Alert, Button, Card, Form } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 
 import axios from "axios";
-import bcrypt from "bcryptjs";
 
 const initialState = {
     username: "",
@@ -32,33 +31,13 @@ function Signup() {
     const handleSignupAction = async (event) => {
         event.preventDefault();
 
-        const salt = await bcrypt.genSalt(10);
-
-        const hashedPassword = await bcrypt.hash(
-            userCredentials.password,
-            salt
-        );
-
-        const confirmHashedPassword = await bcrypt.hash(
-            userCredentials.confirmPassword,
-            salt
-        );
-
-        setUserCredentials({
-            ...userCredentials,
-            password: hashedPassword,
-            confirmPassword: confirmHashedPassword,
-        });
-
-        if (hashedPassword === confirmHashedPassword) {
-            axios
-                .post(process.env.REACT_APP_SIGNUP_URI, userCredentials)
-                .then((res) => {
-                    console.log(res);
-                    history.push("/");
-                })
-                .catch((err) => console.error(err));
-        } else console.log("Incorrect Password");
+        axios
+            .post(process.env.REACT_APP_SIGNUP_URI, userCredentials)
+            .then((res) => {
+                console.log(res);
+                history.push("/");
+            })
+            .catch((err) => console.error(err));
     };
 
     return (

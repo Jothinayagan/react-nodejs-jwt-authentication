@@ -21,7 +21,8 @@ const loginUser = async (req, res) => {
     });
     console.log("JWT key", jwtToken);
 
-    res.status(202)
+    return res
+        .status(202)
         .cookie("token", jwtToken, {
             sameSite: "strict",
             path: "/",
@@ -29,7 +30,6 @@ const loginUser = async (req, res) => {
             httpOnly: true,
         })
         .send({ message: "Cookie assigned!" });
-    return;
 };
 
 const signupUser = async (req, res) => {
@@ -41,15 +41,15 @@ const signupUser = async (req, res) => {
     if (userExist) return res.status(400).send("User already exist!");
 
     // encrypt password
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+    // const salt = bcrypt.genSaltSync(10);
+    // const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
-    console.log(hashedPassword);
+    // console.log(hashedPassword);
 
     const newUser = new userModel({
         name: req.body.username,
         email: req.body.email,
-        password: hashedPassword,
+        password: req.body.password,
     });
 
     try {

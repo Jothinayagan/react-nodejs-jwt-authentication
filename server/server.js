@@ -36,4 +36,4 @@ app.get("/", (_req, res) =>
     res.send(`<h1>If you're able to see this, then server is started!!</h1>`)
 );
 
-app.listen(PORT, () => console.log(`Server up!`));
+app.listen(PORT, () => console.log(`Server up! PORT: ${PORT}`));

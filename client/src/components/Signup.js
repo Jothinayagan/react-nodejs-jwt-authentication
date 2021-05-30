@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import axios from "axios";
+import bcrypt from "bcryptjs";
 
 const initialState = {
     username: "",
@@ -12,20 +13,13 @@ const initialState = {
 };
 
 function Signup() {
+    const history = useHistory();
     const [userCredentials, setUserCredentials] = useState(initialState);
     const [passwordMismatchAlert, setPasswordMismatchAlert] = useState(false);
 
+    // listening to the event
     const handleInput = ({ target }) => {
         setUserCredentials({ ...userCredentials, [target.name]: target.value });
-    };
-
-    const handleSignupAction = (event) => {
-        event.preventDefault();
-
-        axios
-            .post(process.env.REACT_APP_SIGNUP_URI, userCredentials)
-            .then((res) => console.log(res))
-            .catch((err) => console.error(err));
     };
 
     // check weather password is matched
@@ -34,6 +28,38 @@ function Signup() {
             ? setPasswordMismatchAlert(true)
             : setPasswordMismatchAlert(false);
     }, [userCredentials.confirmPassword]);
+
+    const handleSignupAction = async (event) => {
+        event.preventDefault();
+
+        const salt = await bcrypt.genSalt(10);
+
+        const hashedPassword = await bcrypt.hash(
+            userCredentials.password,
+            salt
+        );
+
+        const confirmHashedPassword = await bcrypt.hash(
+            userCredentials.confirmPassword,
+            salt
+        );
+
+        setUserCredentials({
+            ...userCredentials,
+            password: hashedPassword,
+            confirmPassword: confirmHashedPassword,
+        });
+
+        if (hashedPassword === confirmHashedPassword) {
+            axios
+                .post(process.env.REACT_APP_SIGNUP_URI, userCredentials)
+                .then((res) => {
+                    console.log(res);
+                    history.push("/");
+                })
+                .catch((err) => console.error(err));
+        } else console.log("Incorrect Password");
+    };
 
     return (
         <div className="container">
@@ -71,6 +97,7 @@ function Signup() {
                                     type="password"
                                     placeholder="Please enter password"
                                     onChange={handleInput}
+                                    autoComplete="on"
                                     required
                                 />
                             </Form.Group>
@@ -81,6 +108,7 @@ function Signup() {
                                     type="password"
                                     placeholder="Please re-enter password"
                                     onChange={handleInput}
+                                    autoComplete="on"
                                     required
                                 />
                             </Form.Group>

@@ -28,13 +28,23 @@ module.exports = {
     verifyToken: async (req, res, next) => {
         // verify the accessToken is valid or not
         console.log(
-            `AccessToken verification process started at verifyToken function`
+            `AccessToken verification process started at verifyToken function\n`
         );
         try {
-            console.log(JSON.stringify(req.headers));
+            console.log(`${JSON.stringify(req.headers)}\n`);
 
             let token = req.headers["authorization"];
             token = token.split(" ")[1];
+
+            console.log(`Token is ${token}\n`);
+
+            /**
+             * ToDo:
+             * Step 1: Check weather the accessToken is expired or not
+             * Step 2: if accessToken is expired, then check for refreshToken from request
+             * Step 3: if refreshToken is not present or expired, then redirect to login page
+             * Step 4: If refreshToken is present, then call refreshToken function
+             */
 
             await jwt.verify(
                 token,
@@ -64,6 +74,7 @@ module.exports = {
         // generate new accessToken if refresh token is valid
         // otherwise prompt user to login again
         console.log(`Refresh token function started executing..`);
+        
         const { token } = req.body;
         if (!token)
             return res.json({
@@ -71,7 +82,7 @@ module.exports = {
             });
 
         // If refresh token is valid, then create & send new access token
-        jwt.verify.verify(
+        jwt.verify(
             token,
             process.env.JWT_SECRET_REFRESH_TOKEN,
             (err, user) => {

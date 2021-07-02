@@ -1,37 +1,50 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const userModel = require("../../models/user");
+const utilities = require("../../util");
 
 const loginUser = async (req, res) => {
-    console.info("Request Initiated @ Login function");
+    try {
+        console.info("Request Initiated @ Login function\n");
 
-    const { email, password } = req.body;
-    console.log("Email & Password destructured", email, password);
+        const { email, password } = req.body;
+        console.log(`Email: ${email} & Password: ${password}\n`);
 
-    // check whether is already exists
-    const user = await userModel.findOne({ email });
-    if (!user) return res.status(400).send({ message: "User not exist!" });
+        // check whether is already exists
+        const user = await userModel.findOne({ email });
+        if (!user) return res.status(400).send({ message: "User not exist!" });
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-        console.log("Incorrect password", password, user.password);
-        return res.status(400).send({ message: "Incorrect password!" });
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        if (!isValidPassword) {
+            console.log("Incorrect password", password, user.password);
+            return res.status(400).send({ message: "Incorrect password!" });
+        }
+
+        const { accessToken, refreshToken } = await utilities.generateToken({
+            _id: user._id,
+        });
+        console.log(
+            `accessToken => ${accessToken} \n refreshToken => ${refreshToken}\n`
+        );
+
+        return res.status(201).json({ accessToken, refreshToken });
+    } catch (e) {
+        console.log("Error caught @ loginUser controller: ", e);
     }
 
-    const jwtToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_TOKEN, {
-        expiresIn: "5m",
-    });
-    console.log("JWT key", jwtToken);
+    // const jwtToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_TOKEN, {
+    //     expiresIn: "5m",
+    // });
+    // console.log("JWT key", jwtToken);
 
-    return res
-        .status(202)
-        .cookie("token", jwtToken, {
-            sameSite: "strict",
-            path: "/",
-            expires: new Date(new Date().getTime() + 5 * 10000),
-            httpOnly: true,
-        })
-        .send({ message: "Cookie assigned!" });
+    // return res
+    //     .status(202)
+    //     .cookie("token", jwtToken, {
+    //         sameSite: "strict",
+    //         path: "/",
+    //         expires: new Date(new Date().getTime() + 5 * 10000),
+    //         httpOnly: true,
+    //     })
+    //     .send({ message: "Cookie assigned!" });
 };
 
 const signupUser = async (req, res) => {

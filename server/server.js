@@ -1,12 +1,16 @@
 const express = require("express");
 const app = express();
-
-require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+require("dotenv").config();
 
-const routes = require("./routes");
+// import routes
+const authRoute = require("./routes/authRoutes");
+const privateRoute = require("./routes/privateRoutes");
+
+// import middlewares from utilities
+const utilities = require("./util");
 
 const PORT = process.env.PORT || 3004;
 
@@ -19,7 +23,8 @@ app.use(
     })
 );
 app.use(express.json());
-app.use(routes);
+app.use("/api/auth", authRoute);
+app.use("/api/private", utilities.verifyToken, privateRoute);
 
 mongoose.connect(
     process.env.MONGO_URI,

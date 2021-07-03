@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
+import Cookies from "js-cookie";
 import axios from "axios";
 
 const initialState = {
@@ -10,7 +11,9 @@ const initialState = {
 };
 
 function LoginForm() {
+    const history = useHistory();
     const [loginCredentials, setLoginCredentials] = useState(initialState);
+    const [isTokenValid, setTokenValid] = useState(false);
 
     const handleInput = ({ target }) => {
         setLoginCredentials({
@@ -29,9 +32,19 @@ function LoginForm() {
                 },
                 withCredentials: true,
             })
-            .then((res) => console.log(res))
+            .then((res) => {
+                console.log(res.data);
+                const { accessToken, refreshToken } = res.data;
+                Cookies.set("access", accessToken);
+                Cookies.set("refresh", refreshToken);
+                setTokenValid(true);
+            })
             .catch((err) => console.error(err));
     };
+
+    useEffect(() => {
+        if (isTokenValid === true) history.push("/protected");
+    }, [isTokenValid]);
 
     return (
         <div>

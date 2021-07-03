@@ -53,12 +53,13 @@ module.exports = {
                     if (user) {
                         req.user = user;
                         next();
-                    } else if (err.message === "jwt expired")
+                    } else if (err.message === "jwt expired") {
+                        console.log(`\n\n\nToken expired error caught -> ${err.message}\n\n\n`);
                         return res.json({
                             success: false,
                             message: "Access token expired",
                         });
-                    else {
+                    } else {
                         console.log(err);
                         return res
                             .status(403)
@@ -74,7 +75,7 @@ module.exports = {
         // generate new accessToken if refresh token is valid
         // otherwise prompt user to login again
         console.log(`Refresh token function started executing..`);
-        
+
         const { token } = req.body;
         if (!token)
             return res.json({
@@ -82,25 +83,21 @@ module.exports = {
             });
 
         // If refresh token is valid, then create & send new access token
-        jwt.verify(
-            token,
-            process.env.JWT_SECRET_REFRESH_TOKEN,
-            (err, user) => {
-                if (!err) {
-                    const accessToken = jwt.sign(
-                        { _id: user._id },
-                        process.env.JWT_SECRET_TOKEN,
-                        { expiresIn: "5m" }
-                    );
+        jwt.verify(token, process.env.JWT_SECRET_REFRESH_TOKEN, (err, user) => {
+            if (!err) {
+                const accessToken = jwt.sign(
+                    { _id: user._id },
+                    process.env.JWT_SECRET_TOKEN,
+                    { expiresIn: "5m" }
+                );
 
-                    return res.json({ success: true, accessToken });
-                } else {
-                    return res.json({
-                        success: false,
-                        message: "Invalid refresh token",
-                    });
-                }
+                return res.json({ success: true, accessToken });
+            } else {
+                return res.json({
+                    success: false,
+                    message: "Invalid refresh token",
+                });
             }
-        );
+        });
     },
 };

@@ -19,11 +19,12 @@ const loginUser = async (req, res) => {
             return res.status(400).send({ message: "Incorrect password!" });
         }
 
+        // jwt key generation
         const { accessToken, refreshToken } = await utilities.generateToken({
             _id: user._id,
         });
         console.log(
-            `accessToken => ${accessToken} \n refreshToken => ${refreshToken}\n`
+            `accessToken => ${accessToken} \nrefreshToken => ${refreshToken}\n`
         );
 
         return res.status(201).json({ accessToken, refreshToken });

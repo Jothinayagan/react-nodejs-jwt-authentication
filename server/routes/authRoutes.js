@@ -1,7 +1,6 @@
 const router = require("express").Router();
 
-const authController = require("../controllers/authentication/auth");
-// const refreshTokenController = require("../controllers/authentication/refreshToken");
+const authController = require("../controllers/authentication/authController");
 
 const loginUser = authController.loginUser;
 const signupUser = authController.signupUser;

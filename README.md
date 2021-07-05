@@ -1,2 +1,2 @@
 # react-nodejs-jwt-authentication
-Learning of httpOnly cookie to persist user logged in using JWT
+JWT Authentication using React. Redux, Bootstrap, Nodejs, JSON Web Token

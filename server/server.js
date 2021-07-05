@@ -15,14 +15,33 @@ const utilities = require("./util");
 const PORT = process.env.PORT || 3004;
 
 app.use(cookieParser());
-app.use(
-    cors({
-        origin: "http://localhost:3000",
-        methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
-        credentials: true,
-    })
-);
 app.use(express.json());
+
+// const corsOptions = {
+//     origin: "http://localhost:3000",
+//     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+//     credentials: true,
+//     allowedHeaders: ["Content-Type", "Authorization"],
+// };
+
+// app.use(cors());
+
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Authorization"
+    );
+    res.header("Access-Control-Allow-Credentials", "true");
+
+    if (req.method === "OPTIONS") {
+        res.header("Access-Control-Allow-Methods", "POST,GET");
+        return res.status(200).json({});
+    }
+
+    next();
+});
+
 app.use("/api/auth", authRoute);
 app.use("/api/private", utilities.verifyToken, privateRoute);
 

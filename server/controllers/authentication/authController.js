@@ -2,6 +2,15 @@ const bcrypt = require("bcryptjs");
 const userModel = require("../../models/user");
 const utilities = require("../../util");
 
+const refreshToken = async (req, res) => {
+    try {
+        console.info(`Refreshing token started!`);
+        utilities.refreshToken(req, res);
+    } catch (err) {
+        console.error("Error Occurred @ refreshToken:", err);
+    }
+};
+
 const loginUser = async (req, res) => {
     try {
         console.info("Request Initiated @ Login function\n");
@@ -31,21 +40,6 @@ const loginUser = async (req, res) => {
     } catch (e) {
         console.log("Error caught @ loginUser controller: ", e);
     }
-
-    // const jwtToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_TOKEN, {
-    //     expiresIn: "5m",
-    // });
-    // console.log("JWT key", jwtToken);
-
-    // return res
-    //     .status(202)
-    //     .cookie("token", jwtToken, {
-    //         sameSite: "strict",
-    //         path: "/",
-    //         expires: new Date(new Date().getTime() + 5 * 10000),
-    //         httpOnly: true,
-    //     })
-    //     .send({ message: "Cookie assigned!" });
 };
 
 const signupUser = async (req, res) => {
@@ -80,4 +74,4 @@ const signupUser = async (req, res) => {
     }
 };
 
-module.exports = { loginUser, signupUser };
+module.exports = { refreshToken, loginUser, signupUser };

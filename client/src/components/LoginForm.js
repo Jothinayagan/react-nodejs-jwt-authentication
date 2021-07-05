@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-import Cookies from "js-cookie";
-import axios from "axios";
+import { authTrue, authFalse } from "../redux/actions";
+
+// import Cookies from "js-cookie";
+// import axios from "axios";
+
+import { userLoginRequest } from "../helpers/authenticateUser";
 
 const initialState = {
     email: "",
@@ -12,8 +17,8 @@ const initialState = {
 
 function LoginForm() {
     const history = useHistory();
+    const dispatch = useDispatch();
     const [loginCredentials, setLoginCredentials] = useState(initialState);
-    const [isTokenValid, setTokenValid] = useState(false);
 
     const handleInput = ({ target }) => {
         setLoginCredentials({
@@ -25,26 +30,33 @@ function LoginForm() {
     const handleLoginAction = async (event) => {
         event.preventDefault();
 
-        axios
-            .post(process.env.REACT_APP_LOGIN_URI, loginCredentials, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                withCredentials: true,
-            })
-            .then((res) => {
-                console.log(res.data);
-                const { accessToken, refreshToken } = res.data;
-                Cookies.set("access", accessToken);
-                Cookies.set("refresh", refreshToken);
-                setTokenValid(true);
-            })
-            .catch((err) => console.error(err));
-    };
+        const result = await userLoginRequest(loginCredentials);
+        console.log(`Result from loginForm`, result);
 
-    useEffect(() => {
-        if (isTokenValid === true) history.push("/protected");
-    }, [isTokenValid]);
+        if (result) {
+            dispatch(authTrue());
+            history.push("/userDetails");
+        } else {
+            dispatch(authFalse());
+            history.push("/");
+        }
+
+        // axios
+        //     .post(process.env.REACT_APP_LOGIN_URI, loginCredentials, {
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //         },
+        //         withCredentials: true,
+        //     })
+        //     .then((res) => {
+        //         console.log(res.data);
+        //         const { accessToken, refreshToken } = res.data;
+        //         Cookies.set("access", accessToken);
+        //         Cookies.set("refresh", refreshToken);
+        //         setTokenValid(true);
+        //     })
+        //     .catch((err) => console.error(err));
+    };
 
     return (
         <div>

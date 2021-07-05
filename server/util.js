@@ -33,6 +33,9 @@ module.exports = {
         try {
             console.log(`${JSON.stringify(req.headers)}\n`);
 
+            console.log(`Req header auth`, req.headers["authorization"]);
+            // return false;
+
             let token = req.headers["authorization"];
             token = token.split(" ")[1];
 
@@ -50,11 +53,15 @@ module.exports = {
                 token,
                 process.env.JWT_SECRET_TOKEN,
                 async (err, user) => {
+                    console.log(`User ${JSON.stringify(user)}`);
                     if (user) {
+                        console.log(`Inside user success`);
                         req.user = user;
                         next();
                     } else if (err.message === "jwt expired") {
-                        console.log(`\n\n\nToken expired error caught -> ${err.message}\n\n\n`);
+                        console.log(
+                            `\n\n\nToken expired error caught -> ${err.message}\n\n\n`
+                        );
                         return res.json({
                             success: false,
                             message: "Access token expired",
@@ -78,22 +85,26 @@ module.exports = {
 
         const { token } = req.body;
         if (!token)
-            return res.json({
+            return res.status(400).json({
+                success: false,
                 message: "Refresh token not found, login again",
             });
 
+        console.info(`Refresh token is present in the request!\n`);
         // If refresh token is valid, then create & send new access token
         jwt.verify(token, process.env.JWT_SECRET_REFRESH_TOKEN, (err, user) => {
+            console.info(`JWT Refresh token verification success!\n`);
             if (!err) {
                 const accessToken = jwt.sign(
                     { _id: user._id },
                     process.env.JWT_SECRET_TOKEN,
                     { expiresIn: "5m" }
                 );
-
-                return res.json({ success: true, accessToken });
+                console.info(`accessToken Generated!`);
+                return res.status(201).json({ success: true, accessToken });
             } else {
-                return res.json({
+                console.info(`Error: accessToken is not generated!`);
+                return res.status(400).json({
                     success: false,
                     message: "Invalid refresh token",
                 });

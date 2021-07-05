@@ -33,23 +33,16 @@ module.exports = {
         try {
             console.log(`${JSON.stringify(req.headers)}\n`);
 
-            console.log(`Req header auth`, req.headers["authorization"]);
-            // return false;
+            console.log(
+                `req.headers["authorization"] => ${req.headers["authorization"]}`
+            );
 
             let token = req.headers["authorization"];
             token = token.split(" ")[1];
 
             console.log(`Token is ${token}\n`);
 
-            /**
-             * ToDo:
-             * Step 1: Check weather the accessToken is expired or not
-             * Step 2: if accessToken is expired, then check for refreshToken from request
-             * Step 3: if refreshToken is not present or expired, then redirect to login page
-             * Step 4: If refreshToken is present, then call refreshToken function
-             */
-
-            await jwt.verify(
+            jwt.verify(
                 token,
                 process.env.JWT_SECRET_TOKEN,
                 async (err, user) => {

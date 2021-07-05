@@ -6,6 +6,9 @@ const createAccessFromRefresh = (refreshToken) => {
 
     const REFRESH_URI = process.env.REACT_APP_REFRESH_URI;
 
+    // ToDo:
+    // Generate new refreshToken along with accessToken
+
     return new Promise((resolve, _reject) => {
         Axios.post(REFRESH_URI, { token: refreshToken }).then((res) => {
             if (res.data.success === false) {
@@ -13,7 +16,7 @@ const createAccessFromRefresh = (refreshToken) => {
             } else {
                 const { accessToken } = res.data;
                 Cookies.set("access", accessToken);
-                resolve(true);
+                resolve(accessToken);
             }
         });
     });
@@ -39,8 +42,12 @@ export const sendReqToRoute = async () => {
     let accessToken = Cookies.get("access");
     let refreshToken = Cookies.get("refresh");
 
+    console.log(`AccessToken => ${accessToken}`);
+
     // passing args to hasAccess function
     accessToken = await hasAccess(accessToken, refreshToken);
+
+    console.log(`Access token after check => ${accessToken}`);
 
     if (!accessToken) return false;
 
@@ -80,7 +87,10 @@ export const userLoginRequest = (loginCredentials) => {
             .then((res) => {
                 console.log(res.data);
                 const { accessToken, refreshToken } = res.data;
-                Cookies.set("access", accessToken);
+                // Cookies.set("access", accessToken);
+                Cookies.set("access", accessToken, {
+                    expires: new Date(new Date().getTime() + 1 * 60 * 1000),
+                });
                 Cookies.set("refresh", refreshToken);
                 resolve(true);
             })

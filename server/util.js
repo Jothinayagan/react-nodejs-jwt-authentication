@@ -33,8 +33,8 @@ module.exports = {
         try {
             console.log(`${JSON.stringify(req.headers)}\n`);
 
-            console.log(`Req header auth`, req.headers["Authorization"]);
-            return false;
+            console.log(`Req header auth`, req.headers["authorization"]);
+            // return false;
 
             let token = req.headers["authorization"];
             token = token.split(" ")[1];

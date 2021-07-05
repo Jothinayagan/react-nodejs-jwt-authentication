@@ -34,38 +34,50 @@ const hasAccess = async (accessToken, refreshToken) => {
     return accessToken;
 };
 
-export const sendReqToRoute = () => {
+export const sendReqToRoute = async () => {
     // Check the accessToken has validity
     let accessToken = Cookies.get("access");
     let refreshToken = Cookies.get("refresh");
 
     // passing args to hasAccess function
-    accessToken = hasAccess(accessToken, refreshToken);
+    accessToken = await hasAccess(accessToken, refreshToken);
 
     if (!accessToken) return false;
 
     const API = process.env.REACT_APP_PROTECTED_URI;
+    Axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+
     const headersOptions = {
         headers: {
             "Content-Type": "application/json",
-            // 'authorization': `Bearer ${Cookies.get("access")}`,
-            Authorization: "Bearer " + accessToken,
-            // access: Cookies.get("access"),
-            // refresh: Cookies.get("refresh"),
+            Authorization: `Bearer ${accessToken}`,
         },
-        withCredentials: true,
     };
 
-    console.log(`access token: Bearer ${Cookies.get("access")}`);
+    // const axiosOptions = {
+    //     baseURL: API,
+    //     method: "get",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //     },
+    // };
 
-    return new Promise((resolve, reject) => {
+    // let instance = Axios.create(axiosOptions);
+
+    // instance.interceptors.request.use(
+    //     (config) => (config.headers.Authorization = `Bearer ${accessToken}`)
+    // );
+
+    console.log(`access token: Bearer ${accessToken}`);
+
+    return new Promise((resolve, _reject) => {
         Axios.get(API, {}, headersOptions)
             .then((res) => {
                 console.log(res.data);
                 resolve(true);
             })
             .catch((err) => {
-                reject(false);
+                resolve(false);
                 console.error(`Error caught @ checkUserHasValidToken: ${err}`);
             });
     });

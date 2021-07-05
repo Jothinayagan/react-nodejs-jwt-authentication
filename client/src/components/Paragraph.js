@@ -1,5 +1,10 @@
 import React from "react";
 import { Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { withRouter, useHistory } from "react-router-dom";
+
+import { authTrue, authFalse } from "../redux/actions";
+import { sendReqToRoute } from "../helpers/authenticateUser";
 
 const styles = {
     display: "flex",
@@ -10,6 +15,27 @@ const styles = {
 };
 
 function Paragraph() {
+    const history = useHistory();
+    const dispatch = useDispatch();
+
+    const handleClick = async (e) => {
+        e.preventDefault();
+
+        const result = await sendReqToRoute();
+        console.log(`Result from userDetails`, result);
+
+        if (result.success) {
+            dispatch(authTrue());
+            history.push("/userDetails");
+        } else {
+            dispatch(authFalse());
+            history.push("/");
+        }
+        // Send the accessToken and refreshToken in headers along with req
+        // get the result from promise either true or false
+        // if true, proceed to paragraph component else redirect to login
+    };
+
     return (
         <div style={styles}>
             <h1>Paragraph</h1>
@@ -35,9 +61,9 @@ function Paragraph() {
             <br />
             <br />
             <br />
-            <Button>Click here for user details</Button>
+            <Button onClick={handleClick}>Click here for user details</Button>
         </div>
     );
 }
 
-export default Paragraph;
+export default withRouter(Paragraph);

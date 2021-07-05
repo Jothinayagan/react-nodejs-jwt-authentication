@@ -8,7 +8,7 @@ module.exports = {
             try {
                 const token = {
                     accessToken: jwt.sign(key, process.env.JWT_SECRET_TOKEN, {
-                        expiresIn: "5m",
+                        expiresIn: "1m",
                     }),
                     refreshToken: jwt.sign(
                         key,

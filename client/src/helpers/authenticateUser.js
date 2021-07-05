@@ -50,23 +50,8 @@ export const sendReqToRoute = async () => {
     const headersOptions = {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
         },
     };
-
-    // const axiosOptions = {
-    //     baseURL: API,
-    //     method: "get",
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //     },
-    // };
-
-    // let instance = Axios.create(axiosOptions);
-
-    // instance.interceptors.request.use(
-    //     (config) => (config.headers.Authorization = `Bearer ${accessToken}`)
-    // );
 
     console.log(`access token: Bearer ${accessToken}`);
 
@@ -74,7 +59,7 @@ export const sendReqToRoute = async () => {
         Axios.get(API, {}, headersOptions)
             .then((res) => {
                 console.log(res.data);
-                resolve(true);
+                resolve(res.data);
             })
             .catch((err) => {
                 resolve(false);

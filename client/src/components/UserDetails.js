@@ -24,7 +24,7 @@ function UserDetails() {
         const result = await sendReqToRoute();
         console.log(`Result from userDetails`, result);
 
-        if (result) {
+        if (result.success) {
             dispatch(authTrue());
             history.push("/paragraph");
         } else {

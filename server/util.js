@@ -71,7 +71,7 @@ module.exports = {
             console.log("Error caught: ", e);
         }
     },
-    refreshToken: (req, res) => {
+    refreshToken: async (req, res) => {
         // generate new accessToken if refresh token is valid
         // otherwise prompt user to login again
         console.log(`Refresh token function started executing..`);
@@ -84,17 +84,29 @@ module.exports = {
             });
 
         console.info(`Refresh token is present in the request!\n`);
+
         // If refresh token is valid, then create & send new access token
         jwt.verify(token, process.env.JWT_SECRET_REFRESH_TOKEN, (err, user) => {
             console.info(`JWT Refresh token verification success!\n`);
             if (!err) {
-                const accessToken = jwt.sign(
-                    { _id: user._id },
-                    process.env.JWT_SECRET_TOKEN,
-                    { expiresIn: "5m" }
-                );
+                const token = {
+                    accessToken: jwt.sign(
+                        { _id: user._id },
+                        process.env.JWT_SECRET_TOKEN,
+                        {
+                            expiresIn: "1m",
+                        }
+                    ),
+                    refreshToken: jwt.sign(
+                        { _id: user._id },
+                        process.env.JWT_SECRET_REFRESH_TOKEN,
+                        {
+                            expiresIn: "7d",
+                        }
+                    ),
+                };
                 console.info(`accessToken Generated!`);
-                return res.status(201).json({ success: true, accessToken });
+                return res.status(201).json({ success: true, token });
             } else {
                 console.info(`Error: accessToken is not generated!`);
                 return res.status(400).json({

@@ -6,16 +6,16 @@ const createAccessFromRefresh = (refreshToken) => {
 
     const REFRESH_URI = process.env.REACT_APP_REFRESH_URI;
 
-    // ToDo:
-    // Generate new refreshToken along with accessToken
-
     return new Promise((resolve, _reject) => {
         Axios.post(REFRESH_URI, { token: refreshToken }).then((res) => {
             if (res.data.success === false) {
-                resolve(false);
+                resolve(null);
             } else {
-                const { accessToken } = res.data;
-                Cookies.set("access", accessToken);
+                const { accessToken, refreshToken } = res.data.token;
+                Cookies.set("access", accessToken, {
+                    expires: new Date(new Date().getTime() + 1 * 60 * 1000),
+                });
+                Cookies.set("refresh", refreshToken);
                 resolve(accessToken);
             }
         });

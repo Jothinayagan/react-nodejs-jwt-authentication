@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 
 import LoginForm from "./components/LoginForm";
 import Signup from "./components/Signup";
-import SuccessLoginSignup from "./components/SuccessLoginSignup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UserDetails from "./components/UserDetails";
 import Paragraph from "./components/Paragraph";
@@ -19,7 +18,6 @@ function App() {
                 <Switch>
                     <Route path="/" exact component={LoginForm} />
                     <Route path="/signup" component={Signup} />
-                    <Route path="/userSuccess" component={SuccessLoginSignup} />
                     <ProtectedRoute
                         path="/userDetails"
                         component={UserDetails}

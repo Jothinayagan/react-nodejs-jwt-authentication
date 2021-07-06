@@ -1,7 +1,7 @@
 Client:
 
-1. Implement Navar with logout button - Done (6/7/21)
-2. Generate new refresh token when refreshing the accessToken
+1. Implement Navbar with logout button - Done (6/7/21)
+2. Generate new refresh token when refreshing the accessToken - Done (6/7/21)
 3. Persist redux state since all data getting lost at page reloads
 4. Remove all the console and implement winston logger
 5. Implement webpack for server ready packing

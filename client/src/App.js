@@ -1,9 +1,8 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import LandingPage from "./components/LandingPage";
+import LoginForm from "./components/LoginForm";
 import Signup from "./components/Signup";
-import SuccessLoginSignup from "./components/SuccessLoginSignup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UserDetails from "./components/UserDetails";
 import Paragraph from "./components/Paragraph";
@@ -17,9 +16,8 @@ function App() {
             <NavBar isAuthenticatedUser={isAuthenticatedUser} />
             <Router>
                 <Switch>
-                    <Route path="/" exact component={LandingPage} />
+                    <Route path="/" exact component={LoginForm} />
                     <Route path="/signup" component={Signup} />
-                    <Route path="/userSuccess" component={SuccessLoginSignup} />
                     <ProtectedRoute
                         path="/userDetails"
                         component={UserDetails}

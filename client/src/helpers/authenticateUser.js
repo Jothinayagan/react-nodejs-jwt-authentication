@@ -15,7 +15,9 @@ const createAccessFromRefresh = (refreshToken) => {
                 resolve(false);
             } else {
                 const { accessToken } = res.data;
-                Cookies.set("access", accessToken);
+                Cookies.set("access", accessToken, {
+                    expires: new Date(new Date().getTime() + 1 * 60 * 1000),
+                });
                 resolve(accessToken);
             }
         });

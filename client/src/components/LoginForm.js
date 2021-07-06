@@ -40,22 +40,6 @@ function LoginForm() {
             dispatch(authFalse());
             history.push("/");
         }
-
-        // axios
-        //     .post(process.env.REACT_APP_LOGIN_URI, loginCredentials, {
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //         },
-        //         withCredentials: true,
-        //     })
-        //     .then((res) => {
-        //         console.log(res.data);
-        //         const { accessToken, refreshToken } = res.data;
-        //         Cookies.set("access", accessToken);
-        //         Cookies.set("refresh", refreshToken);
-        //         setTokenValid(true);
-        //     })
-        //     .catch((err) => console.error(err));
     };
 
     return (
@@ -99,7 +83,7 @@ function LoginForm() {
             <div className="w-100 text-center mt-2">
                 Need an account?{" "}
                 <strong>
-                    <Link to="/signup">Sign up</Link>
+                    <Link to="/signup">Signup</Link>
                 </strong>
             </div>
         </div>

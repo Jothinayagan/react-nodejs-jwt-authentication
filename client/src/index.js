@@ -7,18 +7,34 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // Redux section
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import { allReducers } from "./redux/reducers";
 
-// add below statement to visualize the redux flow
+// redux-persist
+import { persistReducer, persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/es/integration/react";
+import storage from "redux-persist/lib/storage";
+
+import { rootReducers } from "./redux/reducers";
+
+const persistConfig = {
+    key: "root",
+    storage,
+};
+
+const pReducer = persistReducer(persistConfig, rootReducers);
+
 const store = createStore(
-    allReducers,
+    pReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
+
+const persistor = persistStore(store);
 
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <App className="background" />
+            <PersistGate persistor={persistor}>
+                <App className="background" />
+            </PersistGate>
         </Provider>
     </React.StrictMode>,
     document.getElementById("root")

@@ -3,7 +3,7 @@ import { Navbar, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 
-import { authTrue, authFalse } from "../redux/actions";
+import { authFalse } from "../redux/actions";
 
 function NavBar({ isAuthenticatedUser }) {
     const dispatch = useDispatch();

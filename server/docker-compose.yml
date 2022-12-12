@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  app:
+    container_name: node-server
+    build: .
+    image: node-server
+    command: npm run start
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+    ports:
+      - "3005:3005"
+    volumes:
+      - .:/usr/src/node-server-network
+      - node_modules:/home/node/app/node_modules
+    networks:
+      - node-server-network
+
+volumes:
+  node_modules:
+
+networks:
+  node-server-network:
+    driver: bridge
